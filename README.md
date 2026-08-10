@@ -1,10 +1,13 @@
 # KAUST Kaggle Challenge 3: Offset-Fault Detection in Low-Cost Air Quality Sensors
 
-**24th place** out of the competition field, private F1 **0.972**, with 7 submissions over a single working day.
+**24th place**, private F1 **0.972**, with 7 submissions over a single working day.
 
 The result I actually care about is a different one: a model using **one engineered feature** scored **0.977** on the private leaderboard, beating every 51-feature model I built. I did not select it. This README explains what the feature was, why it won, and why I talked myself out of it.
 
 Kaggle notebook: [Stage 3, few features](https://www.kaggle.com/code/ghostylicious/kaust-kaggle-challenge-3-2026-stage-3-few-features)
+If that link is down, the same notebook sits at the root of this repo as `kaust-sensor-offset-fault-detection.ipynb`, with all of its outputs preserved.
+
+![Submissions and their public vs private scores](images/submissions.png)
 
 ---
 
@@ -86,9 +89,9 @@ For the fewest-features slot I had two candidates: the single feature above, and
 | Solo (1 feature) | 0.99369 | **0.99325** | 0.94824 |
 | Trio (3 features) | 0.99381 | 0.99171 | **0.95906** |
 
-The trio won date-grouped CV by 0.011, seven times larger than the margin by which the solo won the strict holdout. I reasoned that since the test set sits two months beyond training, the scattered-days scheme was the better proxy for a regime shift, and picked the trio.
+The trio won date-grouped CV by 0.011, seven times larger than the margin by which the solo won the strict holdout. The reasoning that carried the day was that since the test set sits two months beyond training, the scattered-days scheme was the better proxy for a regime shift. So the trio went in.
 
-That reasoning was wrong, and it was wrong in a way I should have caught. The **strict future holdout is the only scheme whose shape matches the actual problem**: train on the past, predict forward. Date-grouped CV lets a model see days on both sides of every held-out day, which is not a harder version of the real task, it is a different task. When two schemes disagree, the one that structurally resembles the test set wins, and I had written exactly that sentence in an earlier notebook before overriding it.
+That reasoning was wrong. The **strict future holdout is the only scheme whose shape matches the actual problem**: train on the past, predict forward. Date-grouped CV lets a model see days on both sides of every held-out day, which is not a harder version of the real task, it is a different task. When two schemes disagree, the one that structurally resembles the test set wins, and that sentence was already written in an earlier notebook in this repo before it got overridden.
 
 The private leaderboard was blunt about it:
 
@@ -100,22 +103,31 @@ The private leaderboard was blunt about it:
 | Order-averaged full model (selected) | 0.996 | 0.972 |
 | **Trio, 3 features (selected)** | 0.992 | **0.960** |
 
-The trio was the single worst submission I made. The solo was the best. Selecting it would have scored 0.977 and moved me roughly ten places up the board.
+The trio was the single worst submission of the seven. The solo was the best. Selecting it would have scored 0.977 and moved me roughly ten places up the board.
 
-There is a second lesson underneath the first. Everything at public 0.996 collapsed to private 0.971 or 0.972, while the 0.992 public models held at 0.977. **The public leaderboard ranking was inverted.** With only 10% public and 8 submissions, the public column was never going to discriminate between candidates that disagreed on 250 of 155,639 rows, and I knew that, and I still let the tight cluster at 0.996 make me feel safer about the complicated models than about the simple one.
+There is a second lesson underneath the first. Everything at public 0.996 collapsed to private 0.971 or 0.972, while the 0.992 public models held at 0.977. **The public leaderboard ranking was inverted.** With only 10% public and 8 submissions, the public column was never going to discriminate between candidates that disagreed on 250 of 155,639 rows. I knew that, and the tight cluster at 0.996 still made the complicated models feel safer than the simple one.
 
 ## Repository layout
 
 ```
+kaust-sensor-offset-fault-detection.ipynb              Stage 3 WITH OUTPUTS, the same notebook published on Kaggle
 notebooks/
-  stage1_date_grouped_cv.ipynb      date-grouped GroupKFold, ablations, adversarial validation
-  stage2_strict_temporal.ipynb      forward chaining, honest thresholds, ordering-trap measurement
-  stage3_few_features.ipynb         the fewest-features track, published on Kaggle
-  stage4_robustness.ipynb           neighbourhood-width sweep and ordering robustness
-metrics/                            per-stage F1, fold spreads, thresholds, confusion counts
-submissions/                        all 7 candidates
-images/                             submissions screenshot
+  s1_challenge3_notebookA_date_grouped_cv.ipynb        date-grouped GroupKFold, ablations, adversarial validation
+  s2_challenge3_notebookB_strict_temporal.ipynb        forward chaining, honest thresholds, ordering-trap measurement
+  s3_challenge3_notebookC_minimal_features.ipynb       the fewest-features track
+  s4_kaust_kaggle_challenge3_stage4_robustness.ipynb   neighbourhood-width sweep and ordering robustness
+images/
+  submissions.png                                      final submissions with public and private scores
+README.md
 ```
+
+The notebooks under `notebooks/` are stored clean, without outputs. The executed copy is the one at the repo root, so if you want to read the fewest-features numbers (the solo-vs-trio comparison, the neighbourhood-width sweep, the ordering-sensitivity check) without rerunning anything, open `kaust-sensor-offset-fault-detection.ipynb`. The other stages need to be run to reproduce their tables.
+
+## Reproducing
+
+The notebooks locate the competition files dynamically under `/kaggle/input`, so they run unmodified on Kaggle with the competition dataset attached. CPU only, roughly 8 to 35 minutes each. Notebook C accepts `NB_FAST=1` for a two-minute smoke run.
+
+Requirements: `catboost`, `pandas`, `numpy`, `scikit-learn`.
 
 ## What I would do differently
 
