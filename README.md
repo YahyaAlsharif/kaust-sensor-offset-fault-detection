@@ -110,14 +110,14 @@ There is a second lesson underneath the first. Everything at public 0.996 collap
 ## Repository layout
 
 ```
-kaust-sensor-offset-fault-detection.ipynb              Stage 3 WITH OUTPUTS, the same notebook published on Kaggle
+kaust-sensor-offset-fault-detection.ipynb                 Stage 3 WITH OUTPUTS, the same notebook published on Kaggle
 notebooks/
-  s1_challenge3_notebookA_date_grouped_cv.ipynb        date-grouped GroupKFold, ablations, adversarial validation
-  s2_challenge3_notebookB_strict_temporal.ipynb        forward chaining, honest thresholds, ordering-trap measurement
-  s3_challenge3_notebookC_minimal_features.ipynb       the fewest-features track
-  s4_kaust_kaggle_challenge3_stage4_robustness.ipynb   neighbourhood-width sweep and ordering robustness
+  s1_challenge3_notebookA_date_grouped_cv.ipynb           date-grouped GroupKFold, ablations, adversarial validation
+  s2_challenge3_notebookB_strict_temporal_FIXED.ipynb     forward chaining, honest thresholds, ordering-trap measurement
+  s3_challenge3_notebookC_minimal_features.ipynb          the fewest-features track
+  s4_kaust_kaggle_challenge3_stage4_neighbor_width.ipynb  neighbourhood-width sweep and ordering robustness
 images/
-  submissions.png                                      final submissions with public and private scores
+  submissions.png                                         final submissions with public and private scores
 README.md
 ```
 
